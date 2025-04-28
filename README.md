@@ -1,1 +1,0 @@
-# real_estate_text_bot
