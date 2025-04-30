@@ -1,58 +1,23 @@
+
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route("/")
 def home():
-    return "Real Estate Bot is Live!"
+    return "Real Estate Text Bot is Live!"
 
-@app.route('/sms', methods=['POST'])
+@app.route("/sms", methods=["POST"])
 def sms_reply():
-    msg = request.form.get('Body')
+    incoming_msg = request.form.get("Body")
     resp = MessagingResponse()
+    reply = "Thanks for your message!"
 
-    # Sample logic (you can replace this with your property check)
-    if "123 Main St" in msg:
-        resp.message("Yes, 123 Main St is still available.")
-    else:
-        resp.message("Sorry, that property is not available.")
-    
+    if "buy" in incoming_msg.lower():
+        reply = "Great! I can help you with buying a property."
+    elif "sell" in incoming_msg.lower():
+        reply = "Awesome! Let's talk about selling your home."
+
+    resp.message(reply)
     return str(resp)
-
-# === PROPERTY DATABASE ===
-properties = {
-    "12 taylor drive rehoboth ma": {
-        "price": "$689,000",
-        "bedrooms": 4,
-        "bathrooms": 3,
-        "sqft": "3,200"
-    }
-}
-
-# === HANDLING INCOMING TEXTS ===
-@app.route("/sms", methods=['POST'])
-def sms_reply():
-    incoming_msg = request.form.get('Body', '').lower()
-    resp = MessagingResponse()
-    msg = resp.message()
-
-    found = False
-    for address, details in properties.items():
-        if address in incoming_msg:
-            reply = (f"Property at {address}:\n"
-                     f"Price: {details['price']}\n"
-                     f"Bedrooms: {details['bedrooms']}\n"
-                     f"Bathrooms: {details['bathrooms']}\n"
-                     f"Square Feet: {details['sqft']}")
-            msg.body(reply)
-            found = True
-            break
-
-    if not found:
-        msg.body("Sorry, I couldn't find that property. Can you double-check the address?")
-
-    return str(resp)
-
-if __name__ == "__main__":
-    app.run()
