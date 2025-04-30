@@ -3,6 +3,23 @@ from twilio.twiml.messaging_response import MessagingResponse
 
 app = Flask(__name__)
 
+@app.route('/')
+def home():
+    return "Real Estate Bot is Live!"
+
+@app.route('/sms', methods=['POST'])
+def sms_reply():
+    msg = request.form.get('Body')
+    resp = MessagingResponse()
+
+    # Sample logic (you can replace this with your property check)
+    if "123 Main St" in msg:
+        resp.message("Yes, 123 Main St is still available.")
+    else:
+        resp.message("Sorry, that property is not available.")
+    
+    return str(resp)
+
 # === PROPERTY DATABASE ===
 properties = {
     "12 taylor drive rehoboth ma": {
