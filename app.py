@@ -3,32 +3,31 @@ from twilio.twiml.messaging_response import MessagingResponse
 
 app = Flask(__name__)
 
-# Sample properties
-properties = {
-    "123 Main St": "123 Main St is a 3 bed, 2 bath house listed at $450,000. Open house this Saturday 12–2 PM.",
-    "456 Oak Ave": "456 Oak Ave is a modern condo with 2 beds and 2 baths, priced at $380,000.",
-    "789 Pine Rd": "789 Pine Rd is a cozy 4 bed, 3 bath single-family home for $520,000.",
-    "101 Elm St": "101 Elm St is a beautiful ranch with 3 beds and 2.5 baths, listed at $470,000.",
-    "202 Birch Ln": "202 Birch Ln is a new build with 5 beds and 4 baths, asking price is $650,000."
-}
-
 @app.route("/")
 def home():
     return "Real Estate Text Bot is Live!"
 
-@app.route("/sms", methods=['POST'])
+@app.route("/sms", methods=["POST"])
 def sms_reply():
-    msg = request.form.get('Body')
+    incoming_msg = request.form.get("Body").lower()
     resp = MessagingResponse()
 
-    response_text = "Sorry, I couldn't find that property. Please ask about: " + ", ".join(properties.keys())
-    for address, info in properties.items():
-        if address.lower() in msg.lower():
-            response_text = info
-            break
+    if "buy" in incoming_msg:
+        reply = "Great! I can help you with buying a property. Which property are you interested in?"
+    elif "sell" in incoming_msg:
+        reply = "Awesome! Let's talk about selling your home."
+    elif "123 oak st" in incoming_msg:
+        reply = "123 Oak St: 3 bed, 2 bath, $450,000. Recently renovated and move-in ready!"
+    elif "456 maple ave" in incoming_msg:
+        reply = "456 Maple Ave: 4 bed, 3 bath, $525,000. Spacious backyard and quiet neighborhood."
+    elif "789 pine ln" in incoming_msg:
+        reply = "789 Pine Ln: 2 bed, 1 bath, $350,000. Perfect starter home near downtown."
+    elif "321 elm rd" in incoming_msg:
+        reply = "321 Elm Rd: 5 bed, 4 bath, $680,000. Luxury living with a private pool."
+    elif "654 birch blvd" in incoming_msg:
+        reply = "654 Birch Blvd: 3 bed, 2 bath, $480,000. Open house this weekend!"
+    else:
+        reply = "Thanks for your message! Please type 'buy' or 'sell' or ask about a specific property."
 
-    resp.message(response_text)
+    resp.message(reply)
     return str(resp)
-
-if __name__ == "__main__":
-    app.run(debug=True)
