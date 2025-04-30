@@ -1,3 +1,4 @@
+
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 
@@ -9,25 +10,22 @@ def home():
 
 @app.route("/sms", methods=["POST"])
 def sms_reply():
-    incoming_msg = request.form.get("Body").lower()
+    incoming_msg = request.form.get("Body", "").lower()
     resp = MessagingResponse()
 
     if "buy" in incoming_msg:
-        reply = "Great! I can help you with buying a property. Which property are you interested in?"
+        reply = "Great! I can help you with buying a property. Text a number from 1–5 to see available homes."
     elif "sell" in incoming_msg:
-        reply = "Awesome! Let's talk about selling your home."
-    elif "123 oak st" in incoming_msg:
-        reply = "123 Oak St: 3 bed, 2 bath, $450,000. Recently renovated and move-in ready!"
-    elif "456 maple ave" in incoming_msg:
-        reply = "456 Maple Ave: 4 bed, 3 bath, $525,000. Spacious backyard and quiet neighborhood."
-    elif "789 pine ln" in incoming_msg:
-        reply = "789 Pine Ln: 2 bed, 1 bath, $350,000. Perfect starter home near downtown."
-    elif "321 elm rd" in incoming_msg:
-        reply = "321 Elm Rd: 5 bed, 4 bath, $680,000. Luxury living with a private pool."
-    elif "654 birch blvd" in incoming_msg:
-        reply = "654 Birch Blvd: 3 bed, 2 bath, $480,000. Open house this weekend!"
+        reply = "Awesome! Let's talk about selling your home. I can provide a free evaluation."
+    elif "1" in incoming_msg:
+        reply = "Property 1: 123 Main St, Warwick RI. 3 bed, 2 bath — $450,000. Want a showing?"
+    elif "2" in incoming_msg:
+        reply = "Property 2: 456 Oak Dr, Cranston RI. 4 bed, 3 bath — $525,000. Interested?"
+    elif "3" in incoming_msg:
+        reply = "Property 3: 789 Elm Ln, Providence RI. 2 bed, 2 bath — $390,000. Want more info?"
+    elif "4" in incoming_msg:
+        reply = "Property 4: 101 Maple Ave, Johnston RI. 3 bed, 2.5 bath — $470,000. Schedule a visit?"
+    elif "5" in incoming_msg:
+        reply = "Property 5: 202 Pine St, East Greenwich RI. 5 bed, 4 bath — $699,000. Ready to tour?"
     else:
-        reply = "Thanks for your message! Please type 'buy' or 'sell' or ask about a specific property."
-
-    resp.message(reply)
-    return str(resp)
+        reply = "Thanks for your message! Type 'buy' or 'sell' to get started."
