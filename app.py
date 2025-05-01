@@ -32,4 +32,4 @@ def sms_reply():
         reply = "99 Maple Ln is a fixer-upper listed at $250,000. Want to walk through it?"
 
     resp.message(reply)
-    return str(resp)
+    return str(resp)#
