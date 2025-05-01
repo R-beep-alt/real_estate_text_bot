@@ -1,4 +1,3 @@
-
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 
@@ -10,29 +9,27 @@ def home():
 
 @app.route("/sms", methods=["POST"])
 def sms_reply():
-    incoming_msg = request.form.get("Body")
+    incoming_msg = request.form.get("Body", "").lower()
     resp = MessagingResponse()
 
-    if incoming_msg:
-        msg_lower = incoming_msg.lower()
-        if "buy" in msg_lower:
-            reply = "Great! I can help you with buying a property."
-        elif "sell" in msg_lower:
-            reply = "Awesome! Let's talk about selling your home."
-        elif "123 main" in msg_lower:
-            reply = "123 Main St: 3 bed, 2 bath, $450k. Want to schedule a tour?"
-        elif "456 oak" in msg_lower:
-            reply = "456 Oak Ave: 4 bed, 3 bath, $550k. Great schools nearby!"
-        elif "789 pine" in msg_lower:
-            reply = "789 Pine Rd: 2 bed, 1 bath, $350k. Cozy and affordable!"
-        elif "321 maple" in msg_lower:
-            reply = "321 Maple Dr: 5 bed, 4 bath, $750k. Recently renovated!"
-        elif "654 elm" in msg_lower:
-            reply = "654 Elm St: 3 bed, 2.5 bath, $480k. Nice backyard!"
-        else:
-            reply = "Thanks for your message! Text 'buy' or 'sell' to get started."
-    else:
-        reply = "Empty message received."
+    # Default reply
+    reply = "Thanks for your message!"
+
+    # Property logic
+    if "buy" in incoming_msg:
+        reply = "Great! I can help you with buying a property."
+    elif "sell" in incoming_msg:
+        reply = "Awesome! Let's talk about selling your home."
+    elif "123 pine st" in incoming_msg:
+        reply = "123 Pine St is a 3-bed, 2-bath home listed at $420,000. Want a showing?"
+    elif "45 oak ave" in incoming_msg:
+        reply = "45 Oak Ave is a 4-bed, 3-bath modern home for $560,000. Interested?"
+    elif "77 river rd" in incoming_msg:
+        reply = "77 River Rd is a waterfront 2-bed for $395,000. Want more info?"
+    elif "22 elm dr" in incoming_msg:
+        reply = "22 Elm Dr is a ranch with 5 acres at $610,000. Need a virtual tour?"
+    elif "99 maple ln" in incoming_msg:
+        reply = "99 Maple Ln is a fixer-upper listed at $250,000. Want to walk through it?"
 
     resp.message(reply)
     return str(resp)
